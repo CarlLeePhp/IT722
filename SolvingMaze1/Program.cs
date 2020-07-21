@@ -17,8 +17,6 @@ namespace SolvingMaze1
             Queue<Vertex> starting = new Queue<Vertex>();
             List<Vertex> vertices = GetData();
 
-            
-
             starting.Enqueue(vertices[startPoint]);
             vertices[startPoint].Discovered = true;
 
@@ -49,7 +47,7 @@ namespace SolvingMaze1
             // print the shortest path
             PrintPath(vertices);
 
-            Console.ReadLine();
+            //Console.ReadLine();
         } // Main
 
         static void PrintPath(List<Vertex> vertices)
@@ -76,8 +74,8 @@ namespace SolvingMaze1
         } // PrintPath
         static List<Vertex> GetData()
         {
-            TextReader stdin = Console.In;
-            Console.SetIn(new StreamReader("graph.txt"));
+            //TextReader stdin = Console.In;
+            //Console.SetIn(new StreamReader("graph.txt"));
 
             // Create Vertices
             List<Vertex> vertices = new List<Vertex>();
@@ -98,7 +96,7 @@ namespace SolvingMaze1
                 vertices[n2].Neighbours.Add(vertices[n1]);
             }
 
-            Console.SetIn(stdin);
+            //Console.SetIn(stdin);
             return vertices;
         } // GetData
     } // Class Program

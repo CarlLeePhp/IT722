@@ -3,85 +3,87 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.IO;
 
-namespace ComponentExer
+namespace Bicoloring
 {
     class Program
     {
         static void Main(string[] args)
         {
-            List<Vertex> vertices = GetData();
-            int currentTeam = 1;
-            // loop from 0 to the end
-            // if the vertex is discovered goto next one
-            // print the team, currentTeam++, goto next one
-            for(int i=0; i < vertices.Count; i++)
-            {
-                if (vertices[i].Discovered) continue;
-                PrintTeam(i, vertices, currentTeam);
-                currentTeam++;
-            }
-            Console.ReadLine();
-        } // Main
-        static void PrintTeam(int index, List<Vertex> vertices, int teamNum)
-        {
-            Queue<Vertex> starting = new Queue<Vertex>();
-            List<Vertex> results = new List<Vertex>();
-            starting.Enqueue(vertices[index]);
-            vertices[index].Discovered = true;
-            while (starting.Count > 0)
-            {
-                Vertex currentVtx = starting.Dequeue();
-                results.Add(currentVtx);
-                foreach(Vertex vtx in currentVtx.Neighbours)
-                {
-                    if (!vtx.Discovered)
-                    {
-                        starting.Enqueue(vtx);
-                        vtx.Discovered = true;
-                    }
-                }
-            }
-
-            results.Sort();
-            string result = string.Format("{0}:", teamNum);
-            foreach(Vertex vtx in results)
-            {
-                result += string.Format(" {0}", vtx.Id);
-            }
-            Console.WriteLine(result);
-        }
-        static List<Vertex> GetData()
-        {
             //TextReader stdin = Console.In;
             //Console.SetIn(new StreamReader("graph.txt"));
-            //Console.SetIn(new StreamReader("bones.txt"));
+            string line = Console.ReadLine().Trim();
+            while(line != "0")
+            {
+                int vtxNum = int.Parse(line);
+                List<Vertex> vertices = GetMap(vtxNum);
+                ColorMap(vertices);
+                line = Console.ReadLine().Trim();
+            }
 
-            // Create Vertices
+
+            //Console.SetIn(stdin);
+            //Console.ReadLine();
+        } // Main
+        static void ColorMap(List<Vertex> vertices)
+        {
+            Queue<Vertex> starting = new Queue<Vertex>();
+            vertices[0].Discovered = true;
+            vertices[0].IsBlack = true;
+            Vertex currentVertex;
+            starting.Enqueue(vertices[0]);
+            bool result = true;
+            while (starting.Count > 0)
+            {
+                
+                currentVertex = starting.Dequeue();
+                foreach(Vertex vtx in currentVertex.Neighbours)
+                {
+                    if (vtx.Discovered && vtx.IsBlack == currentVertex.IsBlack)  // conflict
+                    {
+                        result = false;
+                        break;
+                    }
+                    else
+                    {
+                        vtx.Discovered = true;
+                        vtx.IsBlack = !currentVertex.IsBlack;
+                        if(!vtx.Processed) starting.Enqueue(vtx);
+                    }
+                }
+                if (!result) break;
+                currentVertex.Processed = true;
+            }
+
+            if (result)
+            {
+                Console.WriteLine("BICOLORABLE.");
+            }
+            else
+            {
+                Console.WriteLine("NOT BICOLORABLE.");
+            }
+        } // Color Map
+        static List<Vertex> GetMap(int vtxNum)
+        {
             List<Vertex> vertices = new List<Vertex>();
-            int vertexNum = int.Parse(Console.ReadLine());
-            for (int i = 0; i < vertexNum; i++)
+            for(int i=0; i < vtxNum;i++)
             {
                 vertices.Add(new Vertex(i));
             }
-
-            string line;
-            // Build Graph
-            while ((line = Console.ReadLine()) != null)
+            int lineNum = int.Parse(Console.ReadLine());
+            for(int i=0; i<lineNum; i++)
             {
+                string line = Console.ReadLine();
                 string[] parts = line.Split(' ');
                 int n1 = int.Parse(parts[0]);
                 int n2 = int.Parse(parts[1]);
                 vertices[n1].Neighbours.Add(vertices[n2]);
                 vertices[n2].Neighbours.Add(vertices[n1]);
             }
-
-            //Console.SetIn(stdin);
             return vertices;
-        } // GetData
-
+        } // Get Map
     } // Class Program
 
     class Vertex : IComparable<Vertex>
@@ -91,18 +93,21 @@ namespace ComponentExer
         public Vertex Parent { get; set; }
 
         public bool Discovered { get; set; }
+        public bool Processed { get; set; }
+        public bool IsBlack { get; set; }
 
         public Vertex(int id)
         {
             Id = id;
             Discovered = false;
+            Processed = false;
             Neighbours = new List<Vertex>();
         }
 
         public void AddNeighbour(Vertex vtx)
         {
             Neighbours.Add(vtx);
-            for(int i=Neighbours.Count-2; i>=0; i--)
+            for (int i = Neighbours.Count - 2; i >= 0; i--)
             {
                 if (Neighbours[i].Id <= vtx.Id) break;
                 Neighbours[i + 1] = Neighbours[i];

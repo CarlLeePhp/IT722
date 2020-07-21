@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.IO;
 
-namespace ComponentExer
+namespace SecretWord
 {
     class Program
     {
@@ -14,10 +13,15 @@ namespace ComponentExer
         {
             List<Vertex> vertices = GetData();
             int currentTeam = 1;
+            Console.WriteLine(string.Format("There are {0} vertices", vertices.Count));
+            foreach(Vertex vtx in vertices)
+            {
+                Console.WriteLine(vtx.Diag());
+            }
             // loop from 0 to the end
             // if the vertex is discovered goto next one
             // print the team, currentTeam++, goto next one
-            for(int i=0; i < vertices.Count; i++)
+            for (int i = 0; i < vertices.Count; i++)
             {
                 if (vertices[i].Discovered) continue;
                 PrintTeam(i, vertices, currentTeam);
@@ -25,6 +29,7 @@ namespace ComponentExer
             }
             Console.ReadLine();
         } // Main
+
         static void PrintTeam(int index, List<Vertex> vertices, int teamNum)
         {
             Queue<Vertex> starting = new Queue<Vertex>();
@@ -35,7 +40,7 @@ namespace ComponentExer
             {
                 Vertex currentVtx = starting.Dequeue();
                 results.Add(currentVtx);
-                foreach(Vertex vtx in currentVtx.Neighbours)
+                foreach (Vertex vtx in currentVtx.Neighbours)
                 {
                     if (!vtx.Discovered)
                     {
@@ -47,7 +52,7 @@ namespace ComponentExer
 
             results.Sort();
             string result = string.Format("{0}:", teamNum);
-            foreach(Vertex vtx in results)
+            foreach (Vertex vtx in results)
             {
                 result += string.Format(" {0}", vtx.Id);
             }
@@ -55,9 +60,9 @@ namespace ComponentExer
         }
         static List<Vertex> GetData()
         {
-            //TextReader stdin = Console.In;
+            TextReader stdin = Console.In;
             //Console.SetIn(new StreamReader("graph.txt"));
-            //Console.SetIn(new StreamReader("bones.txt"));
+            Console.SetIn(new StreamReader("bones.txt"));
 
             // Create Vertices
             List<Vertex> vertices = new List<Vertex>();
@@ -78,10 +83,9 @@ namespace ComponentExer
                 vertices[n2].Neighbours.Add(vertices[n1]);
             }
 
-            //Console.SetIn(stdin);
+            Console.SetIn(stdin);
             return vertices;
         } // GetData
-
     } // Class Program
 
     class Vertex : IComparable<Vertex>
@@ -102,7 +106,7 @@ namespace ComponentExer
         public void AddNeighbour(Vertex vtx)
         {
             Neighbours.Add(vtx);
-            for(int i=Neighbours.Count-2; i>=0; i--)
+            for (int i = Neighbours.Count - 2; i >= 0; i--)
             {
                 if (Neighbours[i].Id <= vtx.Id) break;
                 Neighbours[i + 1] = Neighbours[i];
