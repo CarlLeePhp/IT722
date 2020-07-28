@@ -40,14 +40,14 @@ namespace SolvingMaze1
                 }
                 if (isEndPoint) break;
             }
-            foreach (Vertex vtx in vertices)
-            {
-                Console.WriteLine(vtx.Diag());
-            }
+            //foreach (Vertex vtx in vertices)
+            //{
+            //    Console.WriteLine(vtx.Diag());
+            //}
             // print the shortest path
             PrintPath(vertices);
 
-            //Console.ReadLine();
+            // Console.ReadLine();
         } // Main
 
         static void PrintPath(List<Vertex> vertices)
