@@ -21,15 +21,61 @@ namespace SecretWord
             // loop from 0 to the end
             // if the vertex is discovered goto next one
             // print the team, currentTeam++, goto next one
+            string result = "";
             for (int i = 0; i < vertices.Count; i++)
             {
                 if (vertices[i].Discovered) continue;
-                PrintTeam(i, vertices, currentTeam);
+                result += GetLetter(i, vertices, currentTeam);
                 currentTeam++;
             }
+
+            printAnagram("", result);
+            
             Console.ReadLine();
         } // Main
 
+        
+        static void printAnagram(string prefix, string word)
+        {
+            if(word.Length == 1)
+            {
+                Console.WriteLine(prefix + word);
+            }
+            else
+            {
+                for(int i = 0; i < word.Length; i++)
+                {
+                    string newPrefix = prefix + word[i];
+                    String rest = word.Remove(i, 1);
+                    printAnagram(newPrefix, rest);
+                }
+            }
+        } // printAnagram
+        static char GetLetter(int index, List<Vertex> vertices, int teamNum)
+        {
+            Queue<Vertex> starting = new Queue<Vertex>();
+            List<Vertex> results = new List<Vertex>();
+            starting.Enqueue(vertices[index]);
+            vertices[index].Discovered = true;
+            while (starting.Count > 0)
+            {
+                Vertex currentVtx = starting.Dequeue();
+                results.Add(currentVtx);
+                foreach (Vertex vtx in currentVtx.Neighbours)
+                {
+                    if (!vtx.Discovered)
+                    {
+                        starting.Enqueue(vtx);
+                        vtx.Discovered = true;
+                    }
+                }
+            }
+
+            
+            // a => 97
+            
+            return (char)(results.Count + 96);
+        }
         static void PrintTeam(int index, List<Vertex> vertices, int teamNum)
         {
             Queue<Vertex> starting = new Queue<Vertex>();
@@ -51,13 +97,12 @@ namespace SecretWord
             }
 
             results.Sort();
-            string result = string.Format("{0}:", teamNum);
-            foreach (Vertex vtx in results)
-            {
-                result += string.Format(" {0}", vtx.Id);
-            }
+            string result = string.Format("{0}: ", teamNum);
+            // a => 97
+            result += string.Format("{0}", (char)(results.Count + 96)) ;
+            
             Console.WriteLine(result);
-        }
+        } // print team
         static List<Vertex> GetData()
         {
             TextReader stdin = Console.In;
