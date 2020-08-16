@@ -1,4 +1,4 @@
-﻿#define LOCALX
+﻿#define LOCAL
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,24 +11,37 @@ namespace ComparingPriorityQueues
 {
     class Program
     {
-        Stopwatch stopwatch = new Stopwatch();
         
         static Queue<int> startPoints = new Queue<int>();
         static Queue<int> endPoints = new Queue<int>();
         static void Main(string[] args)
         {
+#if LOCAL
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+#endif
             List<List<Vertex>> cases = GetData();
             for (int i=0; i < cases.Count; i++)
             {
                 FindShortestPath(cases[i], i, startPoints.Dequeue(), endPoints.Dequeue());
             }
-
+#if LOCAL
+            watch.Stop();
+            TimeSpan ts = watch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+            Console.WriteLine("RunTime " + elapsedTime);
             Console.ReadLine();
+#endif
         } // Main
         static void FindShortestPath(List<Vertex> vertices, int caseIndex, int startPoint, int endPoint)
         {
-            // PriorityQueue<Vertex> starting = new PriorityQueue<Vertex>();
-            SortedQueue<Vertex> starting = new SortedQueue<Vertex>();
+            PriorityQueue<Vertex> starting = new PriorityQueue<Vertex>();
+            // SortedQueue<Vertex> starting = new SortedQueue<Vertex>();
+            // BubbleSortedQueue<Vertex> starting = new BubbleSortedQueue<Vertex>();
+            // LoopQueue<Vertex> starting = new LoopQueue<Vertex>();
+            // SimplePriorityQueue<Vertex> starting = new SimplePriorityQueue<Vertex>();
             starting.Enqueue(vertices[startPoint]);
             vertices[startPoint].Key = 0;
             vertices[startPoint].Discovered = true;
@@ -36,6 +49,7 @@ namespace ComparingPriorityQueues
             while (starting.Count > 0)
             {
                 Vertex currentVtx = starting.Dequeue();
+                if (currentVtx.Visted) continue;
                 foreach (Edge edge in currentVtx.Adjacents)
                 {
                     if (!edge.Dest.Discovered)
@@ -46,9 +60,10 @@ namespace ComparingPriorityQueues
                     if (edge.Dest.Key <= (currentVtx.Key + edge.Weight)) continue;
                     if (!edge.Dest.Visted)
                     {
+
                         edge.Dest.Key = (currentVtx.Key + edge.Weight);
                         edge.Dest.Parent = currentVtx;
-                        starting.UpdateTree();
+                        starting.Enqueue(edge.Dest);
                     }
                 }
                 currentVtx.Visted = true;
@@ -56,7 +71,7 @@ namespace ComparingPriorityQueues
 
             if (vertices[endPoint].Key == int.MaxValue)
             {
-                Console.WriteLine("No path");
+                Console.WriteLine("Case {0}: No path", caseIndex);
             }
             else
             {
@@ -68,7 +83,8 @@ namespace ComparingPriorityQueues
         {
 #if LOCAL
             TextReader stdin = Console.In;
-            Console.SetIn(new StreamReader("graph.txt"));
+            // Console.SetIn(new StreamReader("small.inp"));
+            Console.SetIn(new StreamReader("large.inp"));
 #endif
             List<List<Vertex>> cases = new List<List<Vertex>>();
             List<Vertex> vertices;
@@ -171,6 +187,7 @@ namespace ComparingPriorityQueues
     } // Class Edge
     public class PriorityQueue<T> where T : IComparable<T>
     {
+        
         private List<T> _data;
         public PriorityQueue()
         {
@@ -228,12 +245,10 @@ namespace ComparingPriorityQueues
             return result;
         }
         // update the tree
-        public void UpdateTree()
+        public void UpdateTree(T item)
         {
-            for (int i = _data.Count / 2; i >= 0; i--)
-            {
-                SwipDown(i);
-            }
+            Enqueue(item);
+
         }
         // swip down
         private void SwipDown(int index)
@@ -290,4 +305,90 @@ namespace ComparingPriorityQueues
         }
         
     } // Class SortedQueue
+    public class LoopQueue<T> where T : IComparable<T>
+    {
+        private List<T> _data;
+        public LoopQueue()
+        {
+            _data = new List<T>();
+        }
+        public int Count
+        {
+            get
+            {
+                return _data.Count;
+            }
+        }
+        // Enqueue
+        public void Enqueue(T item)
+        {
+            _data.Add(item);
+        }
+
+        public T Dequeue()
+        {
+            int minIdex = 0;
+            for(int i = 0; i < _data.Count; i++)
+            {
+                if (_data[i].CompareTo(_data[minIdex]) < 0) minIdex = i;
+            }
+            T result = _data[minIdex];
+            _data.RemoveAt(minIdex);
+            return result;
+        }
+        // update the tree
+        public void UpdateTree()
+        {
+            // do not need to update it
+            // But I have to keep this method for main program
+        }
+        
+    } // Class LoopQueue
+    public class BubbleSortedQueue<T> where T : IComparable<T>
+    {
+        private List<T> _data;
+        public BubbleSortedQueue()
+        {
+            _data = new List<T>();
+        }
+        public int Count
+        {
+            get
+            {
+                return _data.Count;
+            }
+        }
+        // Enqueue
+        public void Enqueue(T item)
+        {
+            _data.Add(item);
+            UpdateTree();
+        }
+
+        public T Dequeue()
+        {
+            T result = _data[0];
+            _data.RemoveAt(0);
+            return result;
+        }
+        // update the tree
+        public void UpdateTree()
+        {
+            _data.Sort();
+            for(int i=_data.Count - 1; i>0; i--)
+            {
+                for(int j=0; j < i; j++)
+                {
+                    if (_data[j].CompareTo(_data[i]) > 0) Swap(j, i);
+                }
+            }
+        }
+        private void Swap(int index1, int index2)
+        {
+            if (index1 > (_data.Count - 1) || index2 > (_data.Count - 1)) return;
+            T tmp = _data[index1];
+            _data[index1] = _data[index2];
+            _data[index2] = tmp;
+        }
+    } // Class BubbleSortedQueue
 }
