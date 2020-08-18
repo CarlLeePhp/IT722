@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace ComparingPriorityQueues
 {
@@ -41,7 +42,6 @@ namespace ComparingPriorityQueues
             // SortedQueue<Vertex> starting = new SortedQueue<Vertex>();
             // BubbleSortedQueue<Vertex> starting = new BubbleSortedQueue<Vertex>();
             // LoopQueue<Vertex> starting = new LoopQueue<Vertex>();
-            // SimplePriorityQueue<Vertex> starting = new SimplePriorityQueue<Vertex>();
             starting.Enqueue(vertices[startPoint]);
             vertices[startPoint].Key = 0;
             vertices[startPoint].Discovered = true;
@@ -60,10 +60,26 @@ namespace ComparingPriorityQueues
                     if (edge.Dest.Key <= (currentVtx.Key + edge.Weight)) continue;
                     if (!edge.Dest.Visted)
                     {
-
-                        edge.Dest.Key = (currentVtx.Key + edge.Weight);
-                        edge.Dest.Parent = currentVtx;
-                        starting.Enqueue(edge.Dest);
+                        if(starting is PriorityQueue<Vertex>)
+                        {
+                            //Vertex vtx = new Vertex(edge.Dest.Id);
+                            //vtx.Adjacents = edge.Dest.Adjacents;
+                            //vtx.Discovered = true;
+                            //vtx.Visted = false;
+                            //vtx.Key = (currentVtx.Key + edge.Weight);
+                            //vtx.Parent = currentVtx;
+                            //starting.Enqueue(vtx);
+                            //edge.Dest.Visted = true;
+                            edge.Dest.Key = (currentVtx.Key + edge.Weight);
+                            edge.Dest.Parent = currentVtx;
+                            starting.Enqueue(edge.Dest);
+                        }
+                        else
+                        {
+                            edge.Dest.Key = (currentVtx.Key + edge.Weight);
+                            edge.Dest.Parent = currentVtx;
+                        }
+                        
                     }
                 }
                 currentVtx.Visted = true;
@@ -247,8 +263,14 @@ namespace ComparingPriorityQueues
         // update the tree
         public void UpdateTree(T item)
         {
-            Enqueue(item);
+            // SwipDown should be called from here
 
+        }
+
+        // update an element
+        public void Update(T origin, T updated)
+        {
+            
         }
         // swip down
         private void SwipDown(int index)
@@ -289,22 +311,18 @@ namespace ComparingPriorityQueues
         public void Enqueue(T item)
         {
             _data.Add(item);
-            UpdateTree();
         }
 
         public T Dequeue()
         {
+            _data.Sort();
             T result = _data[0];
             _data.RemoveAt(0);
             return result;
         }
-        // update the tree
-        public void UpdateTree()
-        {
-            _data.Sort();
-        }
         
     } // Class SortedQueue
+    
     public class LoopQueue<T> where T : IComparable<T>
     {
         private List<T> _data;
@@ -336,12 +354,7 @@ namespace ComparingPriorityQueues
             _data.RemoveAt(minIdex);
             return result;
         }
-        // update the tree
-        public void UpdateTree()
-        {
-            // do not need to update it
-            // But I have to keep this method for main program
-        }
+        
         
     } // Class LoopQueue
     public class BubbleSortedQueue<T> where T : IComparable<T>
