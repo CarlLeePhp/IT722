@@ -1,23 +1,26 @@
-﻿using System;
+﻿#define LOCAL
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using WeCantSpell.Hunspell;
 
 namespace SecretWord
 {
     class Program
     {
+        static List<string> results = new List<string>();
         static void Main(string[] args)
         {
             List<Vertex> vertices = GetData();
             int currentTeam = 1;
-            Console.WriteLine(string.Format("There are {0} vertices", vertices.Count));
-            foreach(Vertex vtx in vertices)
-            {
-                Console.WriteLine(vtx.Diag());
-            }
+            //Console.WriteLine(string.Format("There are {0} vertices", vertices.Count));
+            //foreach(Vertex vtx in vertices)
+            //{
+            //    Console.WriteLine(vtx.Diag());
+            //}
             // loop from 0 to the end
             // if the vertex is discovered goto next one
             // print the team, currentTeam++, goto next one
@@ -30,16 +33,31 @@ namespace SecretWord
             }
 
             printAnagram("", result);
+
+            var dictionary = WordList.CreateFromFiles(@"en_GB.dic");
+            Console.WriteLine(dictionary.Check("home") ? "PASS" : "FAIL");
+            foreach (string item in results)
+            {
+                if (dictionary.Check(item))
+                {
+                    Console.WriteLine(item);
+                    break;
+                }
+            }
             
-            Console.ReadLine();
+            
+#if LOCAL
+                Console.ReadLine();
+#endif
         } // Main
 
         
         static void printAnagram(string prefix, string word)
         {
-            if(word.Length == 1)
+            
+            if (word.Length == 1 )
             {
-                Console.WriteLine(prefix + word);
+                results.Add(prefix + word);
             }
             else
             {
@@ -73,8 +91,8 @@ namespace SecretWord
 
             
             // a => 97
-            
-            return (char)(results.Count + 96);
+            // A => 65 
+            return (char)(results.Count + 64);
         }
         static void PrintTeam(int index, List<Vertex> vertices, int teamNum)
         {
@@ -105,10 +123,10 @@ namespace SecretWord
         } // print team
         static List<Vertex> GetData()
         {
+#if LOCAL
             TextReader stdin = Console.In;
-            //Console.SetIn(new StreamReader("graph.txt"));
             Console.SetIn(new StreamReader("bones.txt"));
-
+#endif
             // Create Vertices
             List<Vertex> vertices = new List<Vertex>();
             int vertexNum = int.Parse(Console.ReadLine());
@@ -127,8 +145,9 @@ namespace SecretWord
                 vertices[n1].Neighbours.Add(vertices[n2]);
                 vertices[n2].Neighbours.Add(vertices[n1]);
             }
-
+#if LOCAL
             Console.SetIn(stdin);
+#endif
             return vertices;
         } // GetData
     } // Class Program

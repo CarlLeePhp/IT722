@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicalShuttleJourney", "MagicalShuttleJourney.csproj", "{7743191D-F8C1-4D92-93B3-54AEB4160FA4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7743191D-F8C1-4D92-93B3-54AEB4160FA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7743191D-F8C1-4D92-93B3-54AEB4160FA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7743191D-F8C1-4D92-93B3-54AEB4160FA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7743191D-F8C1-4D92-93B3-54AEB4160FA4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A3D5D01-EE4F-49AD-A092-0532B41769FC}
+	EndGlobalSection
+EndGlobal
