@@ -27,15 +27,25 @@ namespace UbiquitousReligions
                 // End of Simple
 
                 // Union Pro
-                foreach(Edge edge in edgeCases[caseIndex - 1])
+                int treeNum = vtxCases[caseIndex - 1].Count;
+                foreach (Edge edge in edgeCases[caseIndex - 1])
                 {
+                    
                     int leftGroupID = GetGroupID(vtxCases[caseIndex -1], edge.VtxOne);
                     int rightGroupID = GetGroupID(vtxCases[caseIndex - 1], edge.VtxTwo);
                     if (leftGroupID == rightGroupID) continue;
-                    vtxCases[caseIndex - 1][rightGroupID - 1].GroupID = leftGroupID;
+                    // otherwise should be merge
+                    if(edge.VtxTwo.ID != rightGroupID)  // it is not the root
+                    // change the group ID of the root, the height of the tree must less than 3
+                    {
+                        vtxCases[caseIndex - 1][rightGroupID - 1].GroupID = leftGroupID;
+                    }
+                    
                     edge.VtxTwo.GroupID = leftGroupID;
+                    treeNum--;
                 }
-                PrintResultPro(vtxCases[caseIndex - 1], caseIndex);
+                Console.WriteLine(string.Format("Case {0}: {1}", caseIndex, treeNum));
+                // PrintResultPro(vtxCases[caseIndex - 1], caseIndex);
                 // End of Union Pro
 
             }
@@ -50,17 +60,35 @@ namespace UbiquitousReligions
             foreach (Vertex vtx in vertices)
             {
                 parentVtx = vertices[vtx.GroupID - 1];
-                if(vtx.GroupID == vtx.ID || vtx.GroupID == parentVtx.ID)
+                if(vtx.GroupID == vtx.ID || parentVtx.GroupID == parentVtx.ID)
                 groupNum.Add(vtx.GroupID);
-                groupNum.Add(parentVtx.GroupID);
+                while(parentVtx.GroupID != parentVtx.ID)
+                {
+                    parentVtx = vertices[parentVtx.GroupID - 1];
+                }
+                vtx.GroupID = parentVtx.GroupID;
+                groupNum.Add(vtx.GroupID);
             }
             Console.WriteLine(string.Format("Case {0}: {1}", caseIndex, groupNum.Count));
         }
         static int GetGroupID(List<Vertex> vertices, Vertex vtx)
         {
-            if (vtx.GroupID == vtx.ID || vtx.GroupID == vertices[vtx.GroupID - 1].ID) return vtx.GroupID;
-            vtx.GroupID = vertices[vtx.GroupID].GroupID;
-            return vtx.GroupID;
+            Vertex parentVtx = vertices[vtx.GroupID - 1];
+            if (vtx.GroupID == vtx.ID || parentVtx.GroupID == parentVtx.ID) return vtx.GroupID;
+            while(parentVtx.GroupID != parentVtx.ID)
+            {
+                parentVtx = vertices[parentVtx.GroupID - 1];
+            }
+            int rootID = parentVtx.GroupID;
+            parentVtx = vtx;
+            while (parentVtx.GroupID != parentVtx.ID)
+            {
+                Vertex tmp = parentVtx;
+                parentVtx = vertices[parentVtx.GroupID];
+                tmp.GroupID = rootID;
+            }
+                
+            return rootID;
         }
         static void SimpleMerge(List<Vertex> vertices, Edge edge)
         {
