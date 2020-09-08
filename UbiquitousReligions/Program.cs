@@ -1,4 +1,4 @@
-﻿#define LOCAL
+﻿#define LOCALX
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,19 +17,51 @@ namespace UbiquitousReligions
             GetData();
             for(int caseIndex = 1; caseIndex <= vtxCases.Count; caseIndex++)
             {
-                
+
                 // Simple
+                //foreach(Edge edge in edgeCases[caseIndex - 1])
+                //{
+                //    SimpleMerge(vtxCases[caseIndex - 1], edge);
+                //}
+                //PrintResult(vtxCases[caseIndex - 1], caseIndex);
+                // End of Simple
+
+                // Union Pro
                 foreach(Edge edge in edgeCases[caseIndex - 1])
                 {
-                    SimpleMerge(vtxCases[caseIndex - 1], edge);
+                    int leftGroupID = GetGroupID(vtxCases[caseIndex -1], edge.VtxOne);
+                    int rightGroupID = GetGroupID(vtxCases[caseIndex - 1], edge.VtxTwo);
+                    if (leftGroupID == rightGroupID) continue;
+                    vtxCases[caseIndex - 1][rightGroupID - 1].GroupID = leftGroupID;
+                    edge.VtxTwo.GroupID = leftGroupID;
                 }
-                // End of Simple
-                PrintResult(vtxCases[caseIndex - 1], caseIndex);
+                PrintResultPro(vtxCases[caseIndex - 1], caseIndex);
+                // End of Union Pro
+
             }
 #if LOCAL
             Console.ReadLine();
 #endif
         } // Main
+        static void PrintResultPro(List<Vertex> vertices,int caseIndex)
+        {
+            Vertex parentVtx = null;
+            HashSet<int> groupNum = new HashSet<int>();
+            foreach (Vertex vtx in vertices)
+            {
+                parentVtx = vertices[vtx.GroupID - 1];
+                if(vtx.GroupID == vtx.ID || vtx.GroupID == parentVtx.ID)
+                groupNum.Add(vtx.GroupID);
+                groupNum.Add(parentVtx.GroupID);
+            }
+            Console.WriteLine(string.Format("Case {0}: {1}", caseIndex, groupNum.Count));
+        }
+        static int GetGroupID(List<Vertex> vertices, Vertex vtx)
+        {
+            if (vtx.GroupID == vtx.ID || vtx.GroupID == vertices[vtx.GroupID - 1].ID) return vtx.GroupID;
+            vtx.GroupID = vertices[vtx.GroupID].GroupID;
+            return vtx.GroupID;
+        }
         static void SimpleMerge(List<Vertex> vertices, Edge edge)
         {
             if (edge.VtxOne.GroupID == edge.VtxTwo.GroupID) return;
