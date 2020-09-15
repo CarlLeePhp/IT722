@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -22,17 +23,17 @@ namespace GraphcForm
                 a = new Point(e.X, e.Y);
                 count++;
             }
-            if (count == 1)
+            else if (count == 1)
             {
                 b = new Point(e.X, e.Y);
                 count++;
             }
-            if (count == 2)
+            else if (count >= 2)
             {
                 c = new Point(e.X, e.Y);
                 count++;
             }
-
+            pictureBox1.Refresh();
         }
 
         public Form1()
@@ -47,6 +48,28 @@ namespace GraphcForm
             {
                 DrawPoint(g, a, Color.Red);
 
+            }
+            if(count >= 2)
+            {
+                DrawPoint(g, b, Color.Blue);
+            }
+            if(count >= 3)
+            {
+                DrawPoint(g, c, Color.Green);
+                double signedArea = a.X * b.Y + a.Y * c.X + b.X * c.Y - a.X * c.Y - a.Y * b.X - b.Y * c.X;
+                double tolerance = 0.00001;
+                if(Math.Abs(signedArea - 0) <= tolerance)
+                {
+                    labelSignedArea.Text = "On Line";
+                }
+                else if(signedArea < 0)
+                {
+                    labelSignedArea.Text = "Negative";
+                }
+                else
+                {
+                    labelSignedArea.Text = "Positive";
+                }
             }
             g.DrawRectangle(new Pen(Color.Red), 10, 10, 400, 400);
         }
