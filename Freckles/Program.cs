@@ -11,14 +11,16 @@ namespace Freckles
     class Program
     {
         static List<List<Vertex>> caseVtx = new List<List<Vertex>>();
+        static List<List<Edge>> caseEdge = new List<List<Edge>>();
         static void Main(string[] args)
         {
             GetData();
-            foreach(List<Vertex> vertices in caseVtx)
+            for(int caseIndex = 0; caseIndex < caseVtx.Count; caseIndex++)
             {
-                foreach(Vertex vtx in vertices)
+                caseEdge.Add(new List<Edge>());
+                foreach(Vertex vtx in caseVtx[caseIndex])
                 {
-                    Console.WriteLine(vtx.Diag());
+
                 }
             }
 #if LOCAL
@@ -78,4 +80,16 @@ namespace Freckles
             
         }
     } // Vertex
+    class Edge
+    {
+        public Vertex VtxOne { get; set; }
+        public Vertex VtxTwo { get; set; }
+        public double Distance { get; set; }
+        public Edge(Vertex vtxOne, Vertex vtxTwo, double distance)
+        {
+            VtxOne = vtxOne;
+            VtxTwo = vtxTwo;
+            Distance = distance;
+        }
+    }
 }
