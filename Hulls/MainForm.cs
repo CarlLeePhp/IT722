@@ -19,7 +19,9 @@ namespace Hulls
         public MainForm()
         {
             InitializeComponent();
+            
         }
+
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
@@ -110,12 +112,13 @@ namespace Hulls
             points.Sort(radioSort);
 
             // get hull
+            hullPoints.Clear();
             hullPoints.Add(points[0]);
             hullPoints.Add(points[1]);
             for(int i=2; i < points.Count; i++)
             {
                 hullPoints.Add(points[i]);
-                if(!CheckHull())
+                while(!CheckHull())
                 {
                     hullPoints.RemoveAt(hullPoints.Count - 2);
                 }
@@ -171,5 +174,6 @@ namespace Hulls
         {
             return a.X * b.Y + a.Y * c.X + b.X * c.Y - a.X * c.Y - b.X * a.Y - c.X * b.Y;
         }
+        
     }
 }
