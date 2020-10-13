@@ -1,4 +1,4 @@
-﻿#define LOCAL
+﻿#define LOCALX
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,18 +29,22 @@ namespace ConvexHullFinding
                         results.RemoveAt(results.Count - 2);
                     }
                 }
-                results.Sort();
                 pointCase[caseIndex] = results;
             }
 
-            foreach(List<Point> points in pointCase)
+            // print results
+            Console.WriteLine(pointCase.Count);
+            for(int caseIndex = 0; caseIndex < pointCase.Count; caseIndex++)
             {
-                foreach(Point point in points)
+                if (caseIndex != 0) Console.WriteLine(-1);
+                Console.WriteLine(pointCase[caseIndex].Count + 1);
+                foreach(Point point in pointCase[caseIndex])
                 {
-                    Console.WriteLine(point.X + " : " + point.Y);
+                    Console.WriteLine(point);
                 }
-                Console.WriteLine("****Next Case****");
+                Console.WriteLine(pointCase[caseIndex][0]);
             }
+            
 #if LOCAL
             Console.ReadLine();
 #endif
@@ -70,6 +74,19 @@ namespace ConvexHullFinding
                     double y = double.Parse(parts[1]);
                     points.Add(new Point(x, y));
                 }
+                points.RemoveAt(points.Count - 1);
+                for(int m=1; m<points.Count; m++)
+                {
+                    if (points[m].Y < points[0].Y || (points[m].Y == points[0].Y && points[m].X < points[0].X))
+                    {
+                        Point tmp = points[0];
+                        points[0] = points[m];
+                        points[m] = tmp;
+                    }
+                }
+                Point pivot = points[0];
+                IComparer<Point> radioSort = new RadioSort(pivot);
+                points.Sort(radioSort);
                 pointCase.Add(points);
             }
 #if LOCAL
@@ -96,5 +113,50 @@ namespace ConvexHullFinding
             if (this.Y == other.Y) return this.X.CompareTo(other.X);
             return this.Y.CompareTo(other.Y);
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", X, Y);
+        }
+    }
+    class RadioSort : IComparer<Point>
+    {
+        Point pivot;
+        public RadioSort(Point pivot)
+        {
+            this.pivot = pivot;
+        }
+        public int Compare(Point x, Point y)
+        {
+            if (x == pivot)
+            {
+                return 1;
+            }
+            if (SignedArea(pivot, x, y) > -0.001 && SignedArea(pivot, x, y) < 0.001)
+            {
+                double distanceX = Math.Sqrt(
+                    Math.Pow(pivot.X - x.X, 2) +
+                    Math.Pow(pivot.Y - x.Y, 2)
+                    );
+                double distanceY = Math.Sqrt(
+                    Math.Pow(pivot.X - y.X, 2) +
+                    Math.Pow(pivot.Y - y.Y, 2)
+                    );
+                return distanceX.CompareTo(distanceY);
+            }
+            else if (y == pivot || SignedArea(pivot, x, y) > 0)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        private double SignedArea(Point a, Point b, Point c)
+        {
+            return a.X * b.Y + a.Y * c.X + b.X * c.Y - a.X * c.Y - b.X * a.Y - c.X * b.Y;
+        }
+
     }
 }

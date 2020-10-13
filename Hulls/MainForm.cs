@@ -16,6 +16,7 @@ namespace Hulls
         List<Point> points = new List<Point>();
         List<Point> hullPoints = new List<Point>();
         bool isRadio = false;
+        bool isConvex = false;
         public MainForm()
         {
             InitializeComponent();
@@ -52,18 +53,23 @@ namespace Hulls
                     g.DrawString(i.ToString(), new Font("Arial", 10), new SolidBrush(Color.Black), points[i]);
                 }
 
+                
+            }
+
+            if (isConvex)
+            {
                 // draw hull
-                for(int i=0; i< hullPoints.Count; i++)
+                for (int i = 0; i < hullPoints.Count; i++)
                 {
-                    if(i == 0)
+                    if (i == 0)
                     {
                         g.DrawLine(hullPen, hullPoints[hullPoints.Count - 1], hullPoints[i]);
                     }
                     else
                     {
-                        g.DrawLine(hullPen, hullPoints[i-1], hullPoints[i]);
+                        g.DrawLine(hullPen, hullPoints[i - 1], hullPoints[i]);
                     }
-                    
+
                 }
             }
             
@@ -111,18 +117,7 @@ namespace Hulls
             IComparer<Point> radioSort = new RadioSort(points[0]);
             points.Sort(radioSort);
 
-            // get hull
-            hullPoints.Clear();
-            hullPoints.Add(points[0]);
-            hullPoints.Add(points[1]);
-            for(int i=2; i < points.Count; i++)
-            {
-                hullPoints.Add(points[i]);
-                while(!CheckHull())
-                {
-                    hullPoints.RemoveAt(hullPoints.Count - 2);
-                }
-            }
+            
             isRadio = true;
             pictureBox.Refresh();
         }
@@ -141,6 +136,73 @@ namespace Hulls
             Point tmp = points[indexOne];
             points[indexOne] = points[indexTwo];
             points[indexTwo] = tmp;
+        }
+
+        private void buttonConvex_Click(object sender, EventArgs e)
+        {
+            if (isConvex)
+            {
+                isConvex = false;
+            }
+            else
+            {
+                // get hull
+                hullPoints.Clear();
+                hullPoints.Add(points[0]);
+                hullPoints.Add(points[1]);
+                for (int i = 2; i < points.Count; i++)
+                {
+                    hullPoints.Add(points[i]);
+                    while (!CheckHull())
+                    {
+                        hullPoints.RemoveAt(hullPoints.Count - 2);
+                    }
+                }
+                isConvex = true;
+            }
+            
+            pictureBox.Refresh();
+        }
+       
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.F2)
+            {
+                isConvex = false;
+            }
+            if(e.KeyCode == Keys.F1)
+            {
+                isRadio = false;
+            }
+            pictureBox.Refresh();
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F2)
+            {
+                if(!isConvex)
+                {
+                    isConvex = true;
+                    pictureBox.Refresh();
+                }
+                
+            }
+            if (e.KeyCode == Keys.F1)
+            {
+                if(!isRadio)
+                {
+                    isRadio = true;
+                    pictureBox.Refresh();
+                }
+                
+            }
+            
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            KeyPreview = true;
         }
     }
 
