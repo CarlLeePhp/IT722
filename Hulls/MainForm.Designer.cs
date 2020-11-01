@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.buttonSort = new System.Windows.Forms.Button();
-            this.buttonConvex = new System.Windows.Forms.Button();
+            this.labelNote = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -39,58 +38,47 @@
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox.Location = new System.Drawing.Point(41, 30);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(500, 500);
+            this.pictureBox.Size = new System.Drawing.Size(532, 535);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
             // 
-            // buttonSort
+            // labelNote
             // 
-            this.buttonSort.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSort.Location = new System.Drawing.Point(41, 562);
-            this.buttonSort.Name = "buttonSort";
-            this.buttonSort.Size = new System.Drawing.Size(80, 29);
-            this.buttonSort.TabIndex = 1;
-            this.buttonSort.Text = "Sort";
-            this.buttonSort.UseVisualStyleBackColor = true;
-            this.buttonSort.Click += new System.EventHandler(this.buttonSort_Click);
-            // 
-            // buttonConvex
-            // 
-            this.buttonConvex.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonConvex.Location = new System.Drawing.Point(150, 562);
-            this.buttonConvex.Name = "buttonConvex";
-            this.buttonConvex.Size = new System.Drawing.Size(112, 29);
-            this.buttonConvex.TabIndex = 2;
-            this.buttonConvex.Text = "Convex Hull";
-            this.buttonConvex.UseVisualStyleBackColor = true;
-            this.buttonConvex.Click += new System.EventHandler(this.buttonConvex_Click);
+            this.labelNote.AutoSize = true;
+            this.labelNote.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelNote.Location = new System.Drawing.Point(38, 581);
+            this.labelNote.Name = "labelNote";
+            this.labelNote.Size = new System.Drawing.Size(260, 16);
+            this.labelNote.TabIndex = 1;
+            this.labelNote.Text = "F1: Show Radio,  F2: Show Convex Hull";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(601, 616);
-            this.Controls.Add(this.buttonConvex);
-            this.Controls.Add(this.buttonSort);
+            this.Controls.Add(this.labelNote);
             this.Controls.Add(this.pictureBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
+            this.MinimizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Main Form";
+            this.Text = "Convex Hull";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.Button buttonSort;
-        private System.Windows.Forms.Button buttonConvex;
+        private System.Windows.Forms.Label labelNote;
     }
 }
 

@@ -57,12 +57,12 @@ namespace GraphcForm
             {
                 DrawPoint(g, c, Color.Green);
                 double signedArea = a.X * b.Y + a.Y * c.X + b.X * c.Y - a.X * c.Y - a.Y * b.X - b.Y * c.X;
-                double tolerance = 0.00001;
+                double tolerance = 0.0001;
                 if(Math.Abs(signedArea - 0) <= tolerance)
                 {
                     labelSignedArea.Text = "On Line";
                 }
-                else if(signedArea < 0)
+                else if(signedArea > 0)
                 {
                     labelSignedArea.Text = "Negative";
                 }
